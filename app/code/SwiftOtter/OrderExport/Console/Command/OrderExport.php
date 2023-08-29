@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace SwiftOtter\OrderExport\Console\Command;
 
+use SwiftOtter\OrderExport\Model\HeaderData;
+use SwiftOtter\OrderExport\Model\HeaderDataFactory as OrderHeaderDataFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,6 +21,20 @@ class OrderExport extends Command
     const OPT_NAME_SHIP_DATE = 'ship-date';
     const OPT_NAME_MERCHANT_NOTES = 'notes';
 
+    /** @var OrderHeaderDataFactory */
+    private $headerDataFactory;
+
+    /**
+     * @param OrderHeaderDataFactory $headerDataFactory
+     * @param string|null $name
+     */
+    public function __construct(
+        OrderHeaderDataFactory $headerDataFactory,
+        string $name = null
+    ) {
+        parent::__construct($name);
+        $this->headerDataFactory = $headerDataFactory;
+    }
     /**
      * @inheritdoc
      */
@@ -52,7 +68,20 @@ class OrderExport extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Hello world, from a CLI command!');
+        $orderId = (int) $input->getArgument(self::ARG_NAME_ORDER_ID);
+        $notes = $input->getOption(self::OPT_NAME_MERCHANT_NOTES);
+        $shipDate = $input->getOption(self::OPT_NAME_SHIP_DATE);
+
+        /** @var HeaderData $headerData */
+        $headerData = $this->headerDataFactory->create();
+        if ($shipDate) {
+            $headerData->setShipDate(new \DateTime($shipDate));
+        }
+        if ($notes) {
+            $headerData->setMerchantNotes($notes);
+        }
+
+        $output->writeln(print_r($headerData, true));
 
         return 0;
     }
