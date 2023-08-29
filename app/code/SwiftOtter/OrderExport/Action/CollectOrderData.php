@@ -9,17 +9,22 @@ namespace SwiftOtter\OrderExport\Action;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use SwiftOtter\OrderExport\Api\OrderDataCollectorInterface;
 use SwiftOtter\OrderExport\Model\HeaderData;
 
 class CollectOrderData
 {
     /** @var OrderRepositoryInterface */
     private $orderRepository;
+    /** @var OrderDataCollectorInterface[] */
+    private $collectors;
 
     public function __construct(
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
+        array $collectors = []
     ) {
         $this->orderRepository = $orderRepository;
+        $this->collectors = $collectors;
     }
 
     /**
@@ -27,8 +32,12 @@ class CollectOrderData
      */
     public function execute(int $orderId, HeaderData $headerData): array
     {
-        $this->orderRepository->get($orderId);
         $output = [];
+        $order = $this->orderRepository->get($orderId);
+        foreach ($this->collectors as $collector) {
+            $output = array_merge_recursive($output, $collector->collect($order, $headerData));
+        }
+
         return $output;
     }
 }
