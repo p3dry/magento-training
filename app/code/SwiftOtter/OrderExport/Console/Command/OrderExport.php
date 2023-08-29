@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace SwiftOtter\OrderExport\Console\Command;
 
 use SwiftOtter\OrderExport\Action\CollectOrderData;
+use SwiftOtter\OrderExport\Action\ExportOrder;
 use SwiftOtter\OrderExport\Model\HeaderData;
 use SwiftOtter\OrderExport\Model\HeaderDataFactory as OrderHeaderDataFactory;
 use Symfony\Component\Console\Command\Command;
@@ -24,21 +25,22 @@ class OrderExport extends Command
 
     /** @var OrderHeaderDataFactory */
     private $headerDataFactory;
-    /** @var CollectOrderData  */
-    private CollectOrderData $collectOrderData;
+    /** @var ExportOrder  */
+    private ExportOrder $exportOrder;
 
     /**
      * @param OrderHeaderDataFactory $headerDataFactory
+     * @param ExportOrder $exportOrder
      * @param string|null $name
      */
     public function __construct(
         OrderHeaderDataFactory $headerDataFactory,
-        CollectOrderData $collectOrderData,
+        ExportOrder $exportOrder,
         string $name = null
     ) {
         parent::__construct($name);
         $this->headerDataFactory = $headerDataFactory;
-        $this->collectOrderData = $collectOrderData;
+        $this->exportOrder = $exportOrder;
     }
     /**
      * @inheritdoc
@@ -86,9 +88,20 @@ class OrderExport extends Command
             $headerData->setMerchantNotes($notes);
         }
 
-        $orderData = $this->collectOrderData->execute($orderId, $headerData);
+        $result = $this->exportOrder->execute((int) $orderId, $headerData);
+        $success = $result['success'] ?? false;
 
-        $output->writeln(print_r($orderData, true));
+        if ($success) {
+            $output->writeln(__('Successfully exported order'));
+        } else {
+            $msg = $result['error'] ?? null;
+            if ($msg === null) {
+                $msg = __('Unexpected errors occurred');
+            }
+            $output->writeln($msg);
+
+            return 1;
+        }
 
         return 0;
     }
