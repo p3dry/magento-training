@@ -18,15 +18,19 @@ class ExportOrder
     private $config;
     /** @var CollectOrderData */
     private $collectOrderData;
+    /** @var PushDetailsToWebservice  */
+    private PushDetailsToWebservice $pushDetailsToWebservice;
 
     public function __construct(
         OrderRepositoryInterface $orderRepository,
         Config $config,
-        CollectOrderData $collectOrderData
+        CollectOrderData $collectOrderData,
+        PushDetailsToWebservice $pushDetailsToWebservice
     ) {
         $this->orderRepository = $orderRepository;
         $this->config = $config;
         $this->collectOrderData = $collectOrderData;
+        $this->pushDetailsToWebservice = $pushDetailsToWebservice;
     }
 
     /**
@@ -44,7 +48,8 @@ class ExportOrder
         $results = ['success' => false, 'error' => null];
 
         $exportData = $this->collectOrderData->execute($order, $headerData);
-        // TODO Export to web service and save export details
+
+        $results['success'] = $this->pushDetailsToWebservice->execute($exportData, $order);
 
         return $results;
     }
