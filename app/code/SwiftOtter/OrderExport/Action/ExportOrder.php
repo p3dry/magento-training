@@ -49,7 +49,12 @@ class ExportOrder
 
         $exportData = $this->collectOrderData->execute($order, $headerData);
 
-        $results['success'] = $this->pushDetailsToWebservice->execute($exportData, $order);
+        try {
+            $results['success'] = $this->pushDetailsToWebservice->execute($exportData, $order);
+            //TODO Save export details
+        } catch (\Throwable $ex) {
+            $results['error'] = $ex->getMessage();
+        }
 
         return $results;
     }
