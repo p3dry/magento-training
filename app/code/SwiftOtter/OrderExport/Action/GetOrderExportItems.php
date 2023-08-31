@@ -17,7 +17,8 @@ class GetOrderExportItems
 
     public function __construct(
         array $allowedTypes = []
-    ) {
+    )
+    {
         $this->allowedTypes = $allowedTypes;
     }
 

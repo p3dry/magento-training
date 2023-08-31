@@ -1,13 +1,8 @@
 <?php
 declare(strict_types=1);
-/**
- * @by SwiftOtter, Inc.
- * @website https://swiftotter.com
- **/
 
 namespace SwiftOtter\OrderExport\Console\Command;
 
-use SwiftOtter\OrderExport\Action\CollectOrderData;
 use SwiftOtter\OrderExport\Action\ExportOrder;
 use SwiftOtter\OrderExport\Model\HeaderData;
 use SwiftOtter\OrderExport\Model\HeaderDataFactory as OrderHeaderDataFactory;
@@ -25,7 +20,7 @@ class OrderExport extends Command
 
     /** @var OrderHeaderDataFactory */
     private $headerDataFactory;
-    /** @var ExportOrder  */
+    /** @var ExportOrder */
     private ExportOrder $exportOrder;
 
     /**
@@ -35,13 +30,15 @@ class OrderExport extends Command
      */
     public function __construct(
         OrderHeaderDataFactory $headerDataFactory,
-        ExportOrder $exportOrder,
-        string $name = null
-    ) {
+        ExportOrder            $exportOrder,
+        string                 $name = null
+    )
+    {
         parent::__construct($name);
         $this->headerDataFactory = $headerDataFactory;
         $this->exportOrder = $exportOrder;
     }
+
     /**
      * @inheritdoc
      */
@@ -75,7 +72,7 @@ class OrderExport extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $orderId = (int) $input->getArgument(self::ARG_NAME_ORDER_ID);
+        $orderId = (int)$input->getArgument(self::ARG_NAME_ORDER_ID);
         $notes = $input->getOption(self::OPT_NAME_MERCHANT_NOTES);
         $shipDate = $input->getOption(self::OPT_NAME_SHIP_DATE);
 
@@ -88,7 +85,7 @@ class OrderExport extends Command
             $headerData->setMerchantNotes($notes);
         }
 
-        $result = $this->exportOrder->execute((int) $orderId, $headerData);
+        $result = $this->exportOrder->execute((int)$orderId, $headerData);
         $success = $result['success'] ?? false;
 
         if ($success) {

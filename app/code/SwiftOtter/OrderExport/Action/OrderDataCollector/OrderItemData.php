@@ -13,18 +13,19 @@ use SwiftOtter\OrderExport\Model\HeaderData;
 
 class OrderItemData implements OrderDataCollectorInterface
 {
-    /** @var GetOrderExportItems  */
+    /** @var GetOrderExportItems */
     private GetOrderExportItems $getOrderExportItems;
-    /** @var ProductRepositoryInterface  */
+    /** @var ProductRepositoryInterface */
     private ProductRepositoryInterface $productRepository;
-    /** @var SearchCriteriaBuilder  */
+    /** @var SearchCriteriaBuilder */
     private SearchCriteriaBuilder $searchCriteriaBuilder;
 
     public function __construct(
-        GetOrderExportItems $getOrderExportItems,
+        GetOrderExportItems        $getOrderExportItems,
         ProductRepositoryInterface $productRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder
-    ) {
+        SearchCriteriaBuilder      $searchCriteriaBuilder
+    )
+    {
         $this->getOrderExportItems = $getOrderExportItems;
         $this->productRepository = $productRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;

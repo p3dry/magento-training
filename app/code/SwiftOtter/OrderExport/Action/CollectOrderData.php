@@ -19,7 +19,8 @@ class CollectOrderData
 
     public function __construct(
         array $collectors = []
-    ) {
+    )
+    {
         $this->collectors = $collectors;
     }
 

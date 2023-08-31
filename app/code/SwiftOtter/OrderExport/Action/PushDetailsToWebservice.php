@@ -20,9 +20,10 @@ class PushDetailsToWebservice
     private $logger;
 
     public function __construct(
-        Config $config,
+        Config          $config,
         LoggerInterface $logger
-    ) {
+    )
+    {
         $this->config = $config;
         $this->logger = $logger;
     }
@@ -64,7 +65,7 @@ class PushDetailsToWebservice
      */
     private function processResponse(ResponseInterface $response): void
     {
-        $responseBody = (string) $response->getBody();
+        $responseBody = (string)$response->getBody();
         try {
             $responseData = \json_decode($responseBody, true);
         } catch (\Exception $e) {

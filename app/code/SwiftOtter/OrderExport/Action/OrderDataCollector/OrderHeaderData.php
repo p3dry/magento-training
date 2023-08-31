@@ -19,8 +19,9 @@ class OrderHeaderData implements OrderDataCollectorInterface
 
     public function __construct(
         OrderAddressRepositoryInterface $orderAddressRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder
-    ) {
+        SearchCriteriaBuilder           $searchCriteriaBuilder
+    )
+    {
         $this->orderAddressRepository = $orderAddressRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }

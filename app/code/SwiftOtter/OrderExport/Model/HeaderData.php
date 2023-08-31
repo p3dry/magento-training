@@ -3,20 +3,22 @@ declare(strict_types=1);
 
 namespace SwiftOtter\OrderExport\Model;
 
+use DateTime;
+
 class HeaderData
 {
-    /** @var ?\DateTime */
+    /** @var ?DateTime */
     private $shipDate;
 
     /** @var string */
     private $merchantNotes;
 
-    public function getShipDate(): ?\DateTime
+    public function getShipDate(): ?DateTime
     {
         return $this->shipDate;
     }
 
-    public function setShipDate(?\DateTime $shipDate): HeaderData
+    public function setShipDate(?DateTime $shipDate): HeaderData
     {
         $this->shipDate = $shipDate;
         return $this;
@@ -24,7 +26,7 @@ class HeaderData
 
     public function getMerchantNotes(): string
     {
-        return (string) $this->merchantNotes;
+        return (string)$this->merchantNotes;
     }
 
     public function setMerchantNotes(string $merchantNotes): HeaderData

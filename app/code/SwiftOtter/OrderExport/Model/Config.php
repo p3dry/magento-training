@@ -1,9 +1,5 @@
 <?php
-declare(strict_types = 1);
-/**
- * @by SwiftOtter, Inc.
- * @website https://swiftotter.com
- **/
+declare(strict_types=1);
 
 namespace SwiftOtter\OrderExport\Model;
 
@@ -23,7 +19,8 @@ class Config
 
     public function __construct(
         ScopeConfigInterface $scopeConfig
-    ) {
+    )
+    {
         $this->scopeConfig = $scopeConfig;
     }
 
@@ -35,12 +32,12 @@ class Config
     public function getApiToken(string $scopeType = ScopeInterface::SCOPE_STORE, ?string $scopeCode = null): string
     {
         $value = $this->scopeConfig->getValue(self::CONFIG_PATH_API_TOKEN, $scopeType, $scopeCode);
-        return ($value !== null) ? (string) $value : '';
+        return ($value !== null) ? (string)$value : '';
     }
 
     public function getApiUrl(string $scopeType = ScopeInterface::SCOPE_STORE, ?string $scopeCode = null): string
     {
         $value = $this->scopeConfig->getValue(self::CONFIG_PATH_API_URL, $scopeType, $scopeCode);
-        return ($value !== null) ? (string) $value : '';
+        return ($value !== null) ? (string)$value : '';
     }
 }

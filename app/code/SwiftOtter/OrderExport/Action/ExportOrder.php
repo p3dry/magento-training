@@ -18,15 +18,16 @@ class ExportOrder
     private $config;
     /** @var CollectOrderData */
     private $collectOrderData;
-    /** @var PushDetailsToWebservice  */
+    /** @var PushDetailsToWebservice */
     private PushDetailsToWebservice $pushDetailsToWebservice;
 
     public function __construct(
         OrderRepositoryInterface $orderRepository,
-        Config $config,
-        CollectOrderData $collectOrderData,
-        PushDetailsToWebservice $pushDetailsToWebservice
-    ) {
+        Config                   $config,
+        CollectOrderData         $collectOrderData,
+        PushDetailsToWebservice  $pushDetailsToWebservice
+    )
+    {
         $this->orderRepository = $orderRepository;
         $this->config = $config;
         $this->collectOrderData = $collectOrderData;
