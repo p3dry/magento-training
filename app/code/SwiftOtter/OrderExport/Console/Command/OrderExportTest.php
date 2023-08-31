@@ -9,22 +9,27 @@ use SwiftOtter\OrderExport\Model\ResourceModel\OrderExportDetails;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use SwiftOtter\OrderExport\Model\ResourceModel\OrderExportDetails\Collection as OrderExportCollection;
+use SwiftOtter\OrderExport\Model\ResourceModel\OrderExportDetails\CollectionFactory as OrderExportCollectionFactory;
 
 class OrderExportTest extends Command
 {
 
     private OrderExportDetailsInterfaceFactory $orderExportDetailsFactory;
     private OrderExportDetails $orderExportDetails;
+    private OrderExportCollectionFactory $orderExportDetailCollectionFactory;
 
     public function __construct(
         OrderExportDetailsInterfaceFactory $orderExportDetailsFactory,
         OrderExportDetails                 $orderExportDetails,
+        OrderExportCollectionFactory $orderExportDetailCollectionFactory,
         string                             $name = null
     )
     {
         parent::__construct($name);
         $this->orderExportDetailsFactory = $orderExportDetailsFactory;
         $this->orderExportDetails = $orderExportDetails;
+        $this->orderExportDetailCollectionFactory = $orderExportDetailCollectionFactory;
     }
 
     /**
@@ -47,6 +52,11 @@ class OrderExportTest extends Command
         $this->orderExportDetails->load($exportDetails, 1);
 
         $output->writeln(print_r($exportDetails->getData(), true));
+
+        $exportDetailCollection = $this->orderExportDetailCollectionFactory->create();
+        foreach ($exportDetailCollection as $exportDetail) {
+            $output->writeln(print_r($exportDetail->getData(), true));
+        }
         return 0;
     }
 }
