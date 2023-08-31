@@ -4,6 +4,10 @@ declare(strict_types=1);
 namespace SwiftOtter\OrderExport\Model;
 
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Magento\Framework\Exception\CouldNotDeleteException;
+use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Model\AbstractModel;
 use SwiftOtter\OrderExport\Api\OrderExportDetailsRepositoryInterface;
 use SwiftOtter\OrderExport\Api\Data\OrderExportDetailsInterface;
 use SwiftOtter\OrderExport\Model\ResourceModel\OrderExportDetails as OrderExportDetailsResource;
@@ -30,11 +34,12 @@ class OrderExportDetailsRepository implements OrderExportDetailsRepositoryInterf
      * @param CollectionProcessorInterface $collectionProcessor
      */
     public function __construct(
-        OrderExportDetailsResource $exportDetailsResource,
-        OrderExportDetailsFactory $exportDetailsFactory,
+        OrderExportDetailsResource          $exportDetailsResource,
+        OrderExportDetailsFactory           $exportDetailsFactory,
         OrderExportDetailsCollectionFactory $exportDetailsCollectionFactory,
-        CollectionProcessorInterface $collectionProcessor
-    ) {
+        CollectionProcessorInterface        $collectionProcessor
+    )
+    {
         $this->exportDetailsResource = $exportDetailsResource;
         $this->exportDetailsFactory = $exportDetailsFactory;
         $this->exportDetailsCollectionFactory = $exportDetailsCollectionFactory;
@@ -44,9 +49,18 @@ class OrderExportDetailsRepository implements OrderExportDetailsRepositoryInterf
     /**
      * {@inheritdoc}
      */
-    public function save(OrderExportDetailsInterface $exportDetails) : OrderExportDetailsInterface
+    public function save(OrderExportDetailsInterface $exportDetails): OrderExportDetailsInterface
     {
+        if (!($exportDetails instanceof AbstractModel)) {
+            throw new CouldNotSaveException(__('The implementation of OrderExportDetailsInterface has changed'));
+        }
 
+        try {
+            $this->exportDetailsResource->save($exportDetails);
+        } catch (\Exception $e) {
+            throw new CouldNotSaveException(__($e->getMessage()));
+        }
+        return $exportDetails;
     }
 
     /**
@@ -54,7 +68,14 @@ class OrderExportDetailsRepository implements OrderExportDetailsRepositoryInterf
      */
     public function getById(int $detailsId): OrderExportDetailsInterface
     {
+        /** @var OrderExportDetails $details */
+        $details = $this->exportDetailsFactory->create();
+        $this->exportDetailsResource->load($details, $detailsId);
 
+        if (!$details->getId()) {
+            throw new NoSuchEntityException(__('The order export details could  not be found'));
+        }
+        return $details;
     }
 
     /**
@@ -62,7 +83,17 @@ class OrderExportDetailsRepository implements OrderExportDetailsRepositoryInterf
      */
     public function delete(OrderExportDetailsInterface $exportDetails): bool
     {
+        if (!($exportDetails instanceof AbstractModel)) {
+            throw new CouldNotDeleteException(__('The implementation of OrderExportDetailsInterface has changed'));
+        }
 
+        try {
+            $this->exportDetailsResource->delete($exportDetails);
+        } catch (\Exception $e) {
+            throw new CouldNotDeleteException(__($e->getMessage()));
+        }
+
+        return true;
     }
 
     /**
@@ -70,6 +101,6 @@ class OrderExportDetailsRepository implements OrderExportDetailsRepositoryInterf
      */
     public function deleteById(int $detailsId): bool
     {
-
+        return $this->delete($this->getById($detailsId));
     }
 }

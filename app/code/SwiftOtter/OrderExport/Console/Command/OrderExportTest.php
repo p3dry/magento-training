@@ -5,6 +5,7 @@ namespace SwiftOtter\OrderExport\Console\Command;
 
 use SwiftOtter\OrderExport\Api\Data\OrderExportDetailsInterface;
 use SwiftOtter\OrderExport\Api\Data\OrderExportDetailsInterfaceFactory;
+use SwiftOtter\OrderExport\Api\OrderExportDetailsRepositoryInterface;
 use SwiftOtter\OrderExport\Model\ResourceModel\OrderExportDetails;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,18 +19,21 @@ class OrderExportTest extends Command
     private OrderExportDetailsInterfaceFactory $orderExportDetailsFactory;
     private OrderExportDetails $orderExportDetails;
     private OrderExportCollectionFactory $orderExportDetailCollectionFactory;
+    private OrderExportDetailsRepositoryInterface $orderExportDetailsRepository;
 
     public function __construct(
-        OrderExportDetailsInterfaceFactory $orderExportDetailsFactory,
-        OrderExportDetails                 $orderExportDetails,
-        OrderExportCollectionFactory $orderExportDetailCollectionFactory,
-        string                             $name = null
+        OrderExportDetailsInterfaceFactory    $orderExportDetailsFactory,
+        OrderExportDetails                    $orderExportDetails,
+        OrderExportCollectionFactory          $orderExportDetailCollectionFactory,
+        OrderExportDetailsRepositoryInterface $orderExportDetailsRepository,
+        string                                $name = null
     )
     {
         parent::__construct($name);
         $this->orderExportDetailsFactory = $orderExportDetailsFactory;
         $this->orderExportDetails = $orderExportDetails;
         $this->orderExportDetailCollectionFactory = $orderExportDetailCollectionFactory;
+        $this->orderExportDetailsRepository = $orderExportDetailsRepository;
     }
 
     /**
@@ -50,13 +54,19 @@ class OrderExportTest extends Command
     {
         $exportDetails = $this->orderExportDetailsFactory->create();
         $this->orderExportDetails->load($exportDetails, 1);
-
+        $output->writeln(__('Single Order Export Details'));
         $output->writeln(print_r($exportDetails->getData(), true));
 
+        $output->writeln(__('-------------------------------------'));
+        $output->writeln(__('Colllection Order Export Details'));
         $exportDetailCollection = $this->orderExportDetailCollectionFactory->create();
         foreach ($exportDetailCollection as $exportDetail) {
             $output->writeln(print_r($exportDetail->getData(), true));
         }
+        $output->writeln(__('-------------------------------------'));
+        $output->writeln(__('Order Export Details using repository'));
+        $exportDetails = $this->orderExportDetailsRepository->getById(2);
+        $output->writeln(print_r($exportDetails->getData(), true));
         return 0;
     }
 }
