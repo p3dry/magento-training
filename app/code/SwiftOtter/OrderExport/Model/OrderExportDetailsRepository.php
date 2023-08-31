@@ -4,10 +4,13 @@ declare(strict_types=1);
 namespace SwiftOtter\OrderExport\Model;
 
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
+use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Model\AbstractModel;
+use SwiftOtter\OrderExport\Api\Data\OrderExportDetailsSearchResultsInterface;
+use SwiftOtter\OrderExport\Api\Data\OrderExportDetailsSearchResultsInterfaceFactory;
 use SwiftOtter\OrderExport\Api\OrderExportDetailsRepositoryInterface;
 use SwiftOtter\OrderExport\Api\Data\OrderExportDetailsInterface;
 use SwiftOtter\OrderExport\Model\ResourceModel\OrderExportDetails as OrderExportDetailsResource;
@@ -26,6 +29,8 @@ class OrderExportDetailsRepository implements OrderExportDetailsRepositoryInterf
     private $exportDetailsCollectionFactory;
     /** @var CollectionProcessorInterface */
     private $collectionProcessor;
+    /** @var OrderExportDetailsSearchResultsInterfaceFactory */
+    private $exportDetailsSearchResultsFactory;
 
     /**
      * @param OrderExportDetailsResource $exportDetailsResource
@@ -37,13 +42,15 @@ class OrderExportDetailsRepository implements OrderExportDetailsRepositoryInterf
         OrderExportDetailsResource          $exportDetailsResource,
         OrderExportDetailsFactory           $exportDetailsFactory,
         OrderExportDetailsCollectionFactory $exportDetailsCollectionFactory,
-        CollectionProcessorInterface        $collectionProcessor
+        CollectionProcessorInterface        $collectionProcessor,
+        OrderExportDetailsSearchResultsInterfaceFactory $exportDetailsSearchResultsFactory
     )
     {
         $this->exportDetailsResource = $exportDetailsResource;
         $this->exportDetailsFactory = $exportDetailsFactory;
         $this->exportDetailsCollectionFactory = $exportDetailsCollectionFactory;
         $this->collectionProcessor = $collectionProcessor;
+        $this->exportDetailsSearchResultsFactory = $exportDetailsSearchResultsFactory;
     }
 
     /**
@@ -102,5 +109,24 @@ class OrderExportDetailsRepository implements OrderExportDetailsRepositoryInterf
     public function deleteById(int $detailsId): bool
     {
         return $this->delete($this->getById($detailsId));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getList(SearchCriteriaInterface $searchCriteria): OrderExportDetailsSearchResultsInterface
+    {
+        /** @var OrderExportDetailsCollection $collection */
+        $collection = $this->exportDetailsCollectionFactory->create();
+
+        $this->collectionProcessor->process($searchCriteria, $collection);
+
+        /** @var OrderExportDetailsSearchResultsInterface $searchResults */
+        $searchResults = $this->exportDetailsSearchResultsFactory->create();
+        $searchResults->setSearchCriteria($searchCriteria);
+        $searchResults->setItems($collection->getItems());
+        $searchResults->setTotalCount($collection->getSize());
+
+        return $searchResults;
     }
 }

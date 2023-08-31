@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace SwiftOtter\OrderExport\Console\Command;
 
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use SwiftOtter\OrderExport\Api\Data\OrderExportDetailsInterface;
 use SwiftOtter\OrderExport\Api\Data\OrderExportDetailsInterfaceFactory;
 use SwiftOtter\OrderExport\Api\OrderExportDetailsRepositoryInterface;
@@ -20,12 +21,14 @@ class OrderExportTest extends Command
     private OrderExportDetails $orderExportDetails;
     private OrderExportCollectionFactory $orderExportDetailCollectionFactory;
     private OrderExportDetailsRepositoryInterface $orderExportDetailsRepository;
+    private SearchCriteriaBuilder $criteriaBuilder;
 
     public function __construct(
         OrderExportDetailsInterfaceFactory    $orderExportDetailsFactory,
         OrderExportDetails                    $orderExportDetails,
         OrderExportCollectionFactory          $orderExportDetailCollectionFactory,
         OrderExportDetailsRepositoryInterface $orderExportDetailsRepository,
+        SearchCriteriaBuilder                 $criteriaBuilder,
         string                                $name = null
     )
     {
@@ -34,6 +37,7 @@ class OrderExportTest extends Command
         $this->orderExportDetails = $orderExportDetails;
         $this->orderExportDetailCollectionFactory = $orderExportDetailCollectionFactory;
         $this->orderExportDetailsRepository = $orderExportDetailsRepository;
+        $this->criteriaBuilder = $criteriaBuilder;
     }
 
     /**
@@ -67,6 +71,14 @@ class OrderExportTest extends Command
         $output->writeln(__('Order Export Details using repository'));
         $exportDetails = $this->orderExportDetailsRepository->getById(2);
         $output->writeln(print_r($exportDetails->getData(), true));
+
+        $output->writeln(__('-------------------------------------'));
+        $output->writeln(__('Search Filter Order Export Details'));
+        $this->criteriaBuilder->addFilter('merchant_notes', '%export%', 'like');
+        $exportDetailCollection = $this->orderExportDetailsRepository->getList($this->criteriaBuilder->create())->getItems();
+        foreach ($exportDetailCollection as $exportDetail) {
+            $output->writeln(print_r($exportDetail->getData(), true));
+        }
         return 0;
     }
 }
