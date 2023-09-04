@@ -36,8 +36,12 @@ class FulfillmentNoticeProcessor implements LayoutProcessorInterface
             return $jsLayout;
         }
 
+        $fulfillmentBlock = $this->layout->createBlock(BlockByIdentifier::class);
+        $fulfillmentBlock->setData('identifier', 'fulfillment-notice');
+        $fulfillmentBlockOutput = $fulfillmentBlock->toHtml();
+
         $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']['children']
-        ['fulfillmentNotice']['config']['noticeContent'] = 'Hello world, from a LayoutProcessor!';
+        ['fulfillmentNotice']['config']['noticeContent'] = $fulfillmentBlockOutput;
 
         return $jsLayout;
     }
