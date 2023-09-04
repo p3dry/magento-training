@@ -32,7 +32,7 @@ class Config
     public function getApiToken(string $scopeType = ScopeInterface::SCOPE_STORE, ?string $scopeCode = null): string
     {
         $value = $this->scopeConfig->getValue(self::CONFIG_PATH_API_TOKEN, $scopeType, $scopeCode);
-        return ($value !== null) ? (string)$value : '';
+        return ($value !== null) ? (string) $value : '';
     }
 
     public function getApiUrl(string $scopeType = ScopeInterface::SCOPE_STORE, ?string $scopeCode = null): string

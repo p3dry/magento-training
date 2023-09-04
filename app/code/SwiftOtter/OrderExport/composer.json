@@ -7,7 +7,9 @@
         "magento/module-eav": "^102",
         "magento/module-catalog": "^104",
         "magento/module-sales":  "^103",
-        "guzzlehttp/guzzle": "^7.5"
+        "magento/module-checkout": "^100",
+        "guzzlehttp/guzzle": "^7.5",
+        "swiftotter/module-fulfillment-block": "*"
     },
     "autoload": {
         "files": [

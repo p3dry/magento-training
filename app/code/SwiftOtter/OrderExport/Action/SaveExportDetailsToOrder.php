@@ -31,8 +31,14 @@ class SaveExportDetailsToOrder
      */
     public function execute(OrderInterface $order, HeaderData $headerData, array $results): void
     {
-        /** @var OrderExportDetailsInterface $exportDetails */
-        $exportDetails = $this->exportDetailsFactory->create();
+        $orderExts = $order->getExtensionAttributes();
+        $exportDetails = $orderExts->getExportDetails();
+
+        if (!$exportDetails) {
+            /** @var OrderExportDetailsInterface $exportDetails */
+            $exportDetails = $this->exportDetailsFactory->create();
+            $orderExts->setExportDetails($exportDetails);
+        }
 
         $exportDetails->setOrderId((int)$order->getEntityId());
 
@@ -41,6 +47,7 @@ class SaveExportDetailsToOrder
             $time = (new \DateTime())->setTimezone(new \DateTimeZone('UTC'));
             $exportDetails->setExportedAt($time);
         }
+
         if ($merchantNotes = $headerData->getMerchantNotes()) {
             $exportDetails->setMerchantNotes($merchantNotes);
         }

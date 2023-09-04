@@ -71,7 +71,7 @@ class CreateSkuOverrideAttribute implements DataPatchInterface
                 'visible_on_front' => false,
                 'unique' => false,
                 'apply_to' => 'simple,virtual,configurable',
-                'used_in_product_listing' => true
+                'used_in_product_listing' => false
             ]
         );
     }

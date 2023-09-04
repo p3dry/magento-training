@@ -65,7 +65,7 @@ class PushDetailsToWebservice
      */
     private function processResponse(ResponseInterface $response): void
     {
-        $responseBody = (string)$response->getBody();
+        $responseBody = (string) $response->getBody();
         try {
             $responseData = \json_decode($responseBody, true);
         } catch (\Exception $e) {
