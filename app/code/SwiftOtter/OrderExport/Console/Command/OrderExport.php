@@ -66,13 +66,12 @@ class OrderExport extends Command
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
+     * @throws NoSuchEntityException
+     * @throws LocalizedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $orderId = (int)$input->getArgument(self::ARG_NAME_ORDER_ID);
+        $orderId = (int) $input->getArgument(self::ARG_NAME_ORDER_ID);
         $notes = $input->getOption(self::OPT_NAME_MERCHANT_NOTES);
         $shipDate = $input->getOption(self::OPT_NAME_SHIP_DATE);
 

@@ -65,4 +65,7 @@
             <argument name="collectionProcessor" xsi:type="object">SwiftOtter\OrderExport\Virtual\Model\Api\SearchCriteria\DetailsCollectionProcessor</argument>
         </arguments>
     </type>
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="load_export_details_into_order" type="SwiftOtter\OrderExport\Plugin\LoadExportDetailsIntoOrder"/>
+    </type>
 </config>
